@@ -58,9 +58,12 @@ class ProfilePageState extends State<ProfilePage> {
                         "Langage de programmation favori: ${myProfile.favoritelang}"),
                     ElevatedButton(
                         onPressed: updateSecret,
-                        child: Text((showSecret)? "Cache le secret" : "Montre le secret")
-                    ),
-                    (showSecret)? Text(myProfile.secret) : Container(height: 0, width: 0),
+                        child: Text((showSecret)
+                            ? "Cache le secret"
+                            : "Montre le secret")),
+                    (showSecret)
+                        ? Text(myProfile.secret)
+                        : Container(height: 0, width: 0),
                   ],
                 ),
               )),
@@ -77,9 +80,20 @@ class ProfilePageState extends State<ProfilePage> {
           myTextField(controller: surname, hint: "Entrez votre prénom"),
           myTextField(controller: name, hint: "Entrez votre nom"),
           myTextField(
-            controller: secret,
-            hint: "Dites nous un secret",
-            isSecret: true,
+              controller: secret, hint: "Dites nous un secret", isSecret: true),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Genre:${myProfile.genderString()}"),
+              Switch(
+                  value: myProfile.gender,
+                  onChanged: ((newBool) {
+                    setState(() {
+                      myProfile.gender = newBool;
+                    });
+                  }))
+            ],
           )
         ],
       )),
@@ -116,9 +130,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   updateSecret() {
     setState(() {
-      showSecret =!showSecret;
+      showSecret = !showSecret;
     });
   }
-
-
 }
