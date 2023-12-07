@@ -11,6 +11,7 @@ class ProfilePageState extends State<ProfilePage> {
   late TextEditingController surname;
   late TextEditingController name;
   late TextEditingController secret;
+  late TextEditingController age;
   bool showSecret = false;
 
   Map<String, bool> hobbies = {
@@ -29,9 +30,11 @@ class ProfilePageState extends State<ProfilePage> {
     surname = TextEditingController();
     name = TextEditingController();
     secret = TextEditingController();
+    age = TextEditingController();
     surname.text = myProfile.surname;
     name.text = myProfile.name;
     secret.text = myProfile.secret;
+    age.text = myProfile.age.toString();
   }
 
   @override
@@ -86,6 +89,7 @@ class ProfilePageState extends State<ProfilePage> {
               myTextField(controller: name, hint: "Entrez votre nom"),
               myTextField(
                   controller: secret, hint: "Dites nous un secret", isSecret: true),
+              myTextField(controller: age, hint: "Entrez votre age", type: TextInputType.number),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,12 +132,13 @@ class ProfilePageState extends State<ProfilePage> {
   TextField myTextField(
       {required TextEditingController controller,
         required String hint,
-        bool isSecret = false}) {
+        bool isSecret = false, TextInputType type = TextInputType.text}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hint,
       ),
+      keyboardType: type,
       obscureText: isSecret,
       onSubmitted: ((newValue) {
         updateUser();
@@ -149,6 +154,11 @@ class ProfilePageState extends State<ProfilePage> {
             : myProfile.surname,
         name: (name.text != myProfile.name) ? name.text : myProfile.name,
         secret: secret.text,
+        favoritelang: myProfile.favoritelang,
+        hobbies: myProfile.hobbies,
+        height: myProfile.height,
+        age: int.parse(age.text),
+        gender: myProfile.gender,
       );
     });
   }
