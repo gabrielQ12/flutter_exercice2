@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:exercice2_udemy/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -24,6 +26,9 @@ class ProfilePageState extends State<ProfilePage> {
     "Manger": false,
   };
 
+  ImagePicker picker = ImagePicker();
+  File? imageFile;
+
   @override
   void initState() {
     super.initState();
@@ -47,92 +52,137 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    double imageSize = MediaQuery.of(context).size.width / 4;
     return Scaffold(
       appBar: AppBar(title: Text("Mon profile")),
       body: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Card(
-                  color: Colors.deepPurpleAccent.shade100,
-                  elevation: 10,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.all(8),
-                    child: Column(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Card(
+              color: Colors.deepPurpleAccent.shade100,
+              elevation: 10,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.all(10),
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    Text(myProfile.setName()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(myProfile.setName()),
-                        Text("Age: ${myProfile.setAge()}"),
-                        Text("Taille: ${myProfile.setHeight()} "),
-                        Text("Genre: ${myProfile.genderString()}"),
-                        Text("Hobbies: ${myProfile.setHobbies()}"),
-                        Text(
-                            "Langage de programmation favori: ${myProfile.favoritelang}"),
-                        ElevatedButton(
-                            onPressed: updateSecret,
-                            child: Text((showSecret)
-                                ? "Cache le secret"
-                                : "Montre le secret")),
-                        (showSecret)
-                            ? Text(myProfile.secret)
-                            : Container(height: 0, width: 0),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 3.5,
+                          child: (imageFile == null)
+                              ? Image.network("https://qph.cf2.quoracdn.net/main-qimg-729a22aba98d1235fdce4883accaf81e",  height: imageSize, width: imageSize,)
+                              : Image.file(imageFile!, height: imageSize, width: imageSize,),
+                        ),
+                        Column(
+                          children: [
+                            Text("Age: ${myProfile.setAge()}"),
+                            Text("Taille: ${myProfile.setHeight()} "),
+                            Text("Genre: ${myProfile.genderString()}"),
+                          ],
+                        )
                       ],
                     ),
-                  )),
-              const Divider(
-                color: Colors.deepPurpleAccent,
-                thickness: 2,
+                    Text("Hobbies: ${myProfile.setHobbies()}"),
+                    Text(
+                        "Langage de programmation favori: ${myProfile.favoritelang}"),
+                    ElevatedButton(
+                      onPressed: updateSecret,
+                      child: Text(
+                          (showSecret) ? "Cache le secret" : "Montre le secret"),
+                    ),
+                    (showSecret)
+                        ? Text(myProfile.secret)
+                        : Container(height: 0, width: 0),
+                  ],
+                ),
               ),
-              myTitle("Modifier les infos"),
-              myTextField(controller: surname, hint: "Entrez votre prénom"),
-              myTextField(controller: name, hint: "Entrez votre nom"),
-              myTextField(
-                  controller: secret, hint: "Dites nous un secret", isSecret: true),
-              myTextField(controller: age, hint: "Entrez votre age", type: TextInputType.number),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Genre:${myProfile.genderString()}"),
-                  Switch(
-                      value: myProfile.gender,
-                      onChanged: ((newBool) {
-                        setState(() {
-                          myProfile.gender = newBool;
-                        });
-                      })),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Taille:${myProfile.setHeight()} "),
-                  Slider(
-                      value: myProfile.height,
-                      min: 0,
-                      max: 250,
-                      onChanged: ((newHeight) {
-                        setState(() {
-                          myProfile.height = newHeight;
-                        });
-                      }))
-                ],
-              ),
-              const Divider(color: Colors.deepPurpleAccent, thickness: 2),
-              myHobbies(),
-              const Divider(color: Colors.deepPurpleAccent, thickness: 2),
-              myRadios(),
-            ],
-          )),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                IconButton(
+                  onPressed: () => pickImage(source:  ImageSource.camera),
+                  icon: Icon(Icons.camera_alt_rounded),
+                  color: Colors.deepPurple,
+                ),
+                IconButton(
+                  onPressed: () => pickImage(source: ImageSource.gallery),
+                  icon: Icon(Icons.photo_album_outlined),
+                  color: Colors.deepPurple,
+                ),
+              ],
+            ),
+            Divider(
+              color: Colors.deepPurpleAccent,
+              thickness: 2,
+            ),
+            myTitle("Modifier les infos"),
+            myTextField(controller: surname, hint: "Entrez votre prénom"),
+            myTextField(controller: name, hint: "Entrez votre nom"),
+            myTextField(
+              controller: secret,
+              hint: "Dites nous un secret",
+              isSecret: true,
+            ),
+            myTextField(
+              controller: age,
+              hint: "Entrez votre age",
+              type: TextInputType.number,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Genre:${myProfile.genderString()}"),
+                Switch(
+                  value: myProfile.gender,
+                  onChanged: (newBool) {
+                    setState(() {
+                      myProfile.gender = newBool;
+                    });
+                  },
+                ),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Taille:${myProfile.setHeight()} "),
+                Slider(
+                  value: myProfile.height,
+                  min: 0,
+                  max: 250,
+                  onChanged: (newHeight) {
+                    setState(() {
+                      myProfile.height = newHeight;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const Divider(color: Colors.deepPurpleAccent, thickness: 2),
+            myHobbies(),
+            const Divider(color: Colors.deepPurpleAccent, thickness: 2),
+            myRadios(),
+          ],
+        ),
+      ),
     );
   }
 
-  TextField myTextField(
-      {required TextEditingController controller,
-        required String hint,
-        bool isSecret = false, TextInputType type = TextInputType.text}) {
+  TextField myTextField({
+    required TextEditingController controller,
+    required String hint,
+    bool isSecret = false,
+    TextInputType type = TextInputType.text,
+  }) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -140,9 +190,9 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       keyboardType: type,
       obscureText: isSecret,
-      onSubmitted: ((newValue) {
+      onSubmitted: (newValue) {
         updateUser();
-      }),
+      },
     );
   }
 
@@ -178,19 +228,20 @@ class ProfilePageState extends State<ProfilePage> {
         children: [
           Text(hobby),
           Checkbox(
-              value: like,
-              onChanged: (newBool) {
-                setState(() {
-                  hobbies[hobby] = newBool ?? false;
-                  List<String> str = [];
-                  hobbies.forEach((key, value) {
-                    if (value == true) {
-                      str.add(key);
-                    }
-                  });
-                  myProfile.hobbies = str;
+            value: like,
+            onChanged: (newBool) {
+              setState(() {
+                hobbies[hobby] = newBool ?? false;
+                List<String> str = [];
+                hobbies.forEach((key, value) {
+                  if (value == true) {
+                    str.add(key);
+                  }
                 });
-              })
+                myProfile.hobbies = str;
+              });
+            },
+          )
         ],
       );
       widgets.add(r);
@@ -212,17 +263,16 @@ class ProfilePageState extends State<ProfilePage> {
     langs.indexWhere((lang) => lang.startsWith(myProfile.favoritelang));
     for (var x = 0; x < langs.length; x++) {
       Column c = Column(
-
         children: [
           Text(langs[x]),
           Radio(
             value: x,
             groupValue: index,
-            onChanged: ((newValue) {
+            onChanged: (newValue) {
               setState(() {
                 myProfile.favoritelang = langs[newValue as int];
               });
-            }),
+            },
           )
         ],
       );
@@ -231,20 +281,30 @@ class ProfilePageState extends State<ProfilePage> {
     return Column(
       children: [
         myTitle("Language préféré"),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: w
-        )
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: w),
       ],
     );
   }
 
   Text myTitle(String text) {
-    return Text(text,
-        style: const TextStyle(
-          color: Colors.deepPurple,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ));
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Colors.deepPurple,
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
+    );
+  }
+
+  Future pickImage({required ImageSource source}) async {
+    final chosenFile = await picker.pickImage(source: source);
+    setState(() {
+      if (chosenFile == null) {
+        print("Je n'ai rien à ajouter");
+      } else {
+        imageFile = File(chosenFile.path);
+      }
+    });
   }
 }
