@@ -92,7 +92,25 @@ class ProfilePageState extends State<ProfilePage> {
                     setState(() {
                       myProfile.gender = newBool;
                     });
-                  }))
+                  })),
+
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Taille:${myProfile.setHeight()} "),
+              Slider(
+                value: myProfile.height,
+                min: 0,
+                max: 250,
+                onChanged: ((newHeight) {
+                  setState((){
+                    myProfile.height = newHeight;
+                  });
+                })
+              )
             ],
           )
         ],
