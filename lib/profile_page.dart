@@ -13,6 +13,16 @@ class ProfilePageState extends State<ProfilePage> {
   late TextEditingController secret;
   bool showSecret = false;
 
+  Map<String, bool> hobbies = {
+    "jeux vidéo": false,
+    "Chat": false,
+    "Cuisine": false,
+    "Code": false,
+    "Manga": false,
+    "Cinéma": false,
+    "Manger": false,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -112,7 +122,11 @@ class ProfilePageState extends State<ProfilePage> {
                 })
               )
             ],
-          )
+          ),
+          Divider(color: Colors.deepPurpleAccent, thickness: 2),
+          myHobbies(),
+          Divider(color: Colors.deepPurpleAccent, thickness: 2),
+
         ],
       )),
     );
@@ -151,4 +165,33 @@ class ProfilePageState extends State<ProfilePage> {
       showSecret = !showSecret;
     });
   }
+
+  Column myHobbies() {
+    List<Widget> widgets = [];
+    hobbies.forEach((hobby, like) {
+      Row r = Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(hobby),
+          Checkbox(value: like, onChanged: (newBool) {
+            setState(() {
+              hobbies[hobby] = newBool ?? false;
+              List<String> str = [];
+              hobbies.forEach((key, value) {
+                if(value == true) {
+                  str.add(key);
+                }
+              });
+              myProfile.hobbies = str;
+            });
+          })
+        ],
+      );
+      widgets.add(r);
+    });
+    return Column(children: widgets);
+  }
+
+
 }
