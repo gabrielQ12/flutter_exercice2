@@ -11,6 +11,7 @@ class ProfilePageState extends State<ProfilePage> {
   late TextEditingController surname;
   late TextEditingController name;
   late TextEditingController secret;
+  bool showSecret = false;
 
   @override
   void initState() {
@@ -55,6 +56,11 @@ class ProfilePageState extends State<ProfilePage> {
                     Text("Hobbies: ${myProfile.setHobbies()}"),
                     Text(
                         "Langage de programmation favori: ${myProfile.favoritelang}"),
+                    ElevatedButton(
+                        onPressed: updateSecret,
+                        child: Text((showSecret)? "Cache le secret" : "Montre le secret")
+                    ),
+                    (showSecret)? Text(myProfile.secret) : Container(height: 0, width: 0),
                   ],
                 ),
               )),
@@ -70,7 +76,11 @@ class ProfilePageState extends State<ProfilePage> {
               )),
           myTextField(controller: surname, hint: "Entrez votre prénom"),
           myTextField(controller: name, hint: "Entrez votre nom"),
-          myTextField(controller: secret, hint: "Dites nous un secret", isSecret: true,)
+          myTextField(
+            controller: secret,
+            hint: "Dites nous un secret",
+            isSecret: true,
+          )
         ],
       )),
     );
@@ -92,17 +102,23 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-   updateUser() {
+  updateUser() {
     setState(() {
       myProfile = Profile(
         surname: (surname.text != myProfile.surname)
             ? surname.text
             : myProfile.surname,
-        name: (name.text != myProfile.name)
-          ? name.text
-          : myProfile.name,
+        name: (name.text != myProfile.name) ? name.text : myProfile.name,
         secret: secret.text,
       );
     });
   }
+
+  updateSecret() {
+    setState(() {
+      showSecret =!showSecret;
+    });
+  }
+
+
 }
